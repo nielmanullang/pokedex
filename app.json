@@ -1,4 +1,5 @@
 {
   "name": "pokedex",
-  "displayName": "pokedex"
+  "displayName": "pokedex",
+  "apiUrl": "https://pokeapi.co/"
 }
