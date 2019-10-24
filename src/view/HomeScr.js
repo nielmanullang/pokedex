@@ -1,23 +1,28 @@
-import { Container, Content, Header, Left, Right, View } from 'native-base';
+import { Container, Text } from 'native-base';
 import React from 'react';
-import { Dimensions, Platform } from 'react-native';
-import ListPokemon from './../components/ListItem/ListPokemon';
+import { Dimensions, FlatList, SafeAreaView, View } from 'react-native';
+import PokemonCard from './../components/PokemonCard';
 import Toast from './../components/Toast';
 import { apiCall } from './../redux/actions/commonAction';
 import endPoint from './../redux/service/endPoint';
 
+const WIDTH = Dimensions.get('window').width;
+const HEIGHT = Dimensions.get('window').height;
+
 class HomeScreen extends React.Component {
   static navigationOptions = { header: null }
   state = {
-    listPokemon: []
+    listPokemon: [],
+    offset: 0,
+    limit: 20
   }
 
   componentDidMount = () => {
-    this.getListPokemon()
+    this.getListPokemon(this.state.offset, this.state.limit)
   }
 
-  getListPokemon = () => {
-    const api = endPoint.pokemon
+  getListPokemon = (offset, limit) => {
+    const api = endPoint.pokemon + '?offset=' + offset + '&limit=' + limit
     const header = {
       headers: {
         'Content-Type': 'application/json',
@@ -30,7 +35,15 @@ class HomeScreen extends React.Component {
     console.log('callback', callback);
     if (callback.data.count > 0) {
       let listPokemon = callback.data.results
-      this.setState({ listPokemon })
+      listPokemon.map((data, i) => {
+        let pokemonIndex = data.url.split('/')[data.url.split('/').length - 2]
+        let urlImage = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/' + pokemonIndex + '.png'
+        data.urlImage = urlImage
+        data.pokemonIndex = pokemonIndex
+      })
+      this.setState(state => ({
+        listPokemon: [...state.listPokemon, ...listPokemon]
+      }));
     } else {
       this.refs.defaultToastBottom.ShowToastFunction('Oops!! Something Went Wrong')
     }
@@ -40,22 +53,45 @@ class HomeScreen extends React.Component {
     this.props.navigation.navigate('DetailPokemon', { data: data })
   }
 
-  render() {
+  onMomentumScrollBegin = () => {
+    let offset = this.state.offset
+    let limit = this.state.limit
+    offset += 20
+    limit += 20
+    this.setState({ offset, limit, loading: true }, () => {
+      this.getListPokemon(offset, limit)
+    })
+  }
 
+  render() {
     return (
       <Container>
-        <Header androidStatusBarColor="transparent" iosStatusbar="light-content" style={{ marginTop: Dimensions.get("window").height === 812 && Platform.OS == "ios" ? -60 : 0 }}>
-          <Left />
-          <Right />
-        </Header>
-        <Content>
-          <View>
-            <ListPokemon
-              listPokemon={this.state.listPokemon}
-              _action={this._action}
+        <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ justifyContent: 'center', flex: 1, paddingLeft: 15, paddingTop: 20, height: HEIGHT * 0.85 }}>
+            <Text welcome style={{ fontWeight: 'bold', textAlign: 'center' }}>List Pokemon</Text>
+            <FlatList
+              style={{marginTop: 15}}
+              data={this.state.listPokemon}
+              onEndThreshold={0.5}
+              onMomentumScrollBegin={this.onMomentumScrollBegin}
+              renderItem={({ item }) => (
+                <View style={{ flex: 1, flexDirection: 'column', margin: 1 }}>
+                  <PokemonCard
+                    key={item.pokemonIndex}
+                    item={{
+                      name: item.name,
+                      url: item.url,
+                      urlImage: item.urlImage,
+                    }}
+                    _action={this._action}
+                  />
+                </View>
+              )}
+              numColumns={3}
+              keyExtractor={(item, index) => index}
             />
           </View>
-        </Content>
+        </SafeAreaView>
         <Toast ref="defaultToastBottom" position="bottom" />
       </Container>
     );

@@ -91,7 +91,7 @@ class DetailPokemonScreen extends React.Component {
                     <Right style={{ flex: 1.5 }} />
                 </Header>
                 <Content>
-                    <View style={{ backgroundColor: '#FFF' }}>
+                    <View style={{ backgroundColor: '#FFF', paddingRight: 15 }}>
                         <View style={{ flexDirection: 'row', paddingLeft: 25, paddingRight: 25, paddingTop: 15, paddingBottom: 15, borderBottomColor: '#000', borderBottomWidth: .5 }}>
                             {urlImage != null && <Image source={{ uri: urlImage }} style={{ alignSelf: 'stretch', height: 100, width: 100, borderRadius: 3, resizeMode: 'contain', marginRight: 15 }} />}
                             <Text>{description}</Text>
