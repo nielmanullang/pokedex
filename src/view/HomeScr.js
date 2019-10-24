@@ -156,13 +156,14 @@ class HomeScreen extends React.Component {
     let offset = 0
     let limit = 20
     let select = null
+    let listPokemon = []
     if (index >= 0) {
       select = listType[index]
       let type = select.url.split('/')[select.url.split('/').length - 2]
       this._isVisibleModalFilterVisible(false)
       this.setState({ type: true }, () => { this.getListPokemonByType(type) })
     } else {
-      this.setState({ offset, limit }, () => { this.getListPokemon(offset, limit) })
+      this.setState({ offset, limit, listPokemon, type: false }, () => { this.getListPokemon(offset, limit) })
     }
     this._isVisibleModalFilterVisible(false)
   }
@@ -196,11 +197,11 @@ class HomeScreen extends React.Component {
             />
           </View>
         </SafeAreaView>
-        {this.state.listPokemon.length > 0 && <View style={{ alignContent: 'center', flexDirection: 'row', justifyContent: 'center' }}>
+        <View style={{ alignContent: 'center', flexDirection: 'row', justifyContent: 'center' }}>
           <TouchableOpacity style={{ borderRadius: 30, backgroundColor: '#fff', position: 'absolute', borderColor: '#3d3d3d', borderWidth: 0.2, bottom: 15, paddingTop: 12, paddingBottom: 12, paddingLeft: 25, paddingRight: 25, flexDirection: 'row', shadowOffset: { width: 3, height: 3 }, shadowColor: '3d3d3d', shadowOpacity: 0.2 }} onPress={() => this.setState({ modalFilterVisible: true })}>
             <Icon style={{ fontSize: 18, marginRight: 15 }} type="FontAwesome" name='filter' /><Text style={{ fontSize: 14 }}>Filter</Text>
           </TouchableOpacity>
-        </View>}
+        </View>
         <Toast ref="defaultToastBottom" position="bottom" />
         <Filter
           modalVisible={this.state.modalFilterVisible}

@@ -9,7 +9,9 @@
     "test": "jest",
     "lint": "eslint .",
     "android-release": "rm -rf *.apk && cd android && ./gradlew assembleRelease && cd .. && mv android/app/build/outputs/apk/release/app-release.apk . && mv app-release.apk pokedex.apk",
-    "ios-clean": "rm -rf package-lock.json && rm -rf node_modules && cd ios && rm -rf Pods && rm -rf Podfile.lock && rm -rf pokedex.xcworkspace && cd .. && npm install && react-native link && cd ios && pod install && cd .."
+    "ios-clean": "rm -rf package-lock.json && rm -rf node_modules && cd ios && rm -rf Pods && rm -rf Podfile.lock && rm -rf pokedex.xcworkspace && cd .. && npm install && react-native link && cd ios && pod install && cd ..",
+    "android-clean": "rm -rf package-lock.json && rm -rf node_modules && npm install && react-native link",
+    "android-bundle": "react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res"
   },
   "dependencies": {
     "@ptomasroos/react-native-multi-slider": "^1.0.0",
