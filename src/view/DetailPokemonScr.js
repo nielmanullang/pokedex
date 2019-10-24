@@ -35,7 +35,7 @@ class DetailPokemonScreen extends React.Component {
 
     responeGetPokemon = (callback) => {
         console.log('callback', callback);
-        if (callback.data) {
+        if (callback.status == 200) {
             let pokemon = callback.data
             this.setState({ pokemon })
         } else {
